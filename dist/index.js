@@ -1634,13 +1634,16 @@ const serializers = {
       : `${emoji} ${capitalize(item.payload.action)}`;
     return `${line} PR ${toUrlFormat(item)} in ${toUrlFormat(item.repo.name)}`;
   },
+  PushEvent: (item) => {
+    return `🔥 Pushed to ${item.repo.name}`;
+  }
 };
 
 Toolkit.run(
   async (tools) => {
     // Get the user's public events
     tools.log.debug(`Getting activity for ${GH_USERNAME}`);
-    const events = await tools.github.activity.listPublicEventsForUser({
+    const events = await tools.github.activity.listEventsForAuthenticatedUser({
       username: GH_USERNAME,
       per_page: 100,
     });
