@@ -99,7 +99,7 @@ const serializers = {
   },
   PushEvent: (item) => {
     return `🔥 Pushed to ${item.repo.name}`;
-  }
+  },
 };
 
 Toolkit.run(
@@ -149,70 +149,34 @@ Toolkit.run(
       tools.log.info("Found less than 5 activities");
     }
 
-    if (startIdx !== -1 && endIdx === -1) {
-      // Add one since the content needs to be inserted just after the initial comment
-      startIdx++;
-      content.forEach((line, idx) =>
-        readmeContent.splice(startIdx + idx, 0, `${idx + 1}. ${line}`)
-      );
+    if (endIdx !== -1) {
+      const oldContent = readmeContent.slice(startIdx + 1, endIdx).join("\n");
 
-      // Append <!--END_SECTION:activity--> comment
-      readmeContent.splice(
-        startIdx + content.length,
-        0,
-        "<!--END_SECTION:activity-->"
-      );
+      const newContent = content
+        .map((line, idx) => `${idx + 1}. ${line}`)
+        .join("\n");
 
-      // Update README
-      fs.writeFileSync("./README.md", readmeContent.join("\n"));
-
-      // Commit to the remote repository
-      try {
-        await commitFile();
-      } catch (err) {
-        tools.log.debug("Something went wrong");
-        return tools.exit.failure(err);
+      if (oldContent.trim() === newContent.trim()) {
+        tools.exit.success("No changes detected");
       }
-      tools.exit.success("Wrote to README");
+      // Remove old content
+      readmeContent.slice(startIdx, endIdx + 1).forEach((line) => {
+        readmeContent.splice(startIdx + 1, 1);
+      });
     }
 
-    const oldContent = readmeContent.slice(startIdx + 1, endIdx).join("\n");
-    const newContent = content
-      .map((line, idx) => `${idx + 1}. ${line}`)
-      .join("\n");
-
-    if (oldContent.trim() === newContent.trim())
-      tools.exit.success("No changes detected");
-
+    // Add one since the content needs to be inserted just after the initial comment
     startIdx++;
+    content.forEach((line, idx) =>
+      readmeContent.splice(startIdx + idx, 0, `${idx + 1}. ${line}`)
+    );
 
-    // Recent GitHub Activity content between the comments
-    const readmeActivitySection = readmeContent.slice(startIdx, endIdx);
-    if (!readmeActivitySection.length) {
-      content.some((line, idx) => {
-        // User doesn't have 5 public events
-        if (!line) {
-          return true;
-        }
-        readmeContent.splice(startIdx + idx, 0, `${idx + 1}. ${line}`);
-      });
-      tools.log.success("Wrote to README");
-    } else {
-      // It is likely that a newline is inserted after the <!--START_SECTION:activity--> comment (code formatter)
-      let count = 0;
-
-      readmeActivitySection.some((line, idx) => {
-        // User doesn't have 5 public events
-        if (!content[count]) {
-          return true;
-        }
-        if (line !== "") {
-          readmeContent[startIdx + idx] = `${count + 1}. ${content[count]}`;
-          count++;
-        }
-      });
-      tools.log.success("Updated README with the recent activity");
-    }
+    // Append <!--END_SECTION:activity--> comment
+    readmeContent.splice(
+      startIdx + content.length,
+      0,
+      "<!--END_SECTION:activity-->"
+    );
 
     // Update README
     fs.writeFileSync("./README.md", readmeContent.join("\n"));
@@ -224,6 +188,7 @@ Toolkit.run(
       tools.log.debug("Something went wrong");
       return tools.exit.failure(err);
     }
+
     tools.exit.success("Pushed to remote repository");
   },
   {
