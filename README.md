@@ -36,13 +36,17 @@ jobs:
 
 The above job runs every half an hour, you can change it as you wish based on the [cron syntax](https://jasonet.co/posts/scheduled-actions/#the-cron-syntax).
 
-Please note that only those public events that belong to the following list show up:-
+Please note that only those public events that belong to the following list show up. I
 
+- `PushEvent`
 - `IssueEvent`
 - `IssueCommentEvent`
 - `PullRequestEvent`
 
-You can find an example [here](https://github.com/jamesgeorge007/jamesgeorge007/blob/master/.github/workflows/update-readme.yml).
+You can find an example [here](https://github.com/DeKal/DeKal/blob/master/.github/workflows/cron.yml).
+
+**Note:**
+In case you want to show private events, please generate a new token, then adding your token to [Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) in the repository which contains the README file. Then you can use `${{ secrets.MY_SECRET_GITHUB_TOKEN }}` to get private event.
 
 ### Override defaults
 
