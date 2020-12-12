@@ -2,13 +2,14 @@
 
 Updates `README.md` with the recent GitHub activity of a user.
 
-<img width="735" alt="profile-repo" src="https://user-images.githubusercontent.com/25279263/87703301-3aa4a500-c7b8-11ea-8eb6-245121997a7b.png">
-
+<img width="735" alt="profile-repo" src="https://raw.githubusercontent.com/DeKal/github-activity-readme/master/images/demo.png">
+ 
 ---
 
 ## Instructions
 
-- Add the comment `<!--START_SECTION:activity-->` (entry point) within `README.md`. You can find an example [here](https://github.com/jamesgeorge007/jamesgeorge007/blob/master/README.md).
+- Add the comment `<!--START_SECTION:activity-->` (entry point) within `README.md`. You can find an example [here](https://github.com/DeKal/DeKal/blob/master/README.md).
+
 
 - It's the time to create a workflow file.
 
